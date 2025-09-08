@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"log/slog"
@@ -25,27 +24,43 @@ func main() {
 	ginInstance.POST("/api/reader", func(ctx *gin.Context) {
 		file, err := ctx.FormFile("ktp")
 		if err != nil {
-			fmt.Println(err)
+			ctx.AbortWithStatusJSON(
+				500,
+				BuildResponseFailed("Gagal membaca KTP", err.Error(), nil),
+			)
+			return
 		}
 
 		openedFile, err := file.Open()
 		if err != nil {
-			fmt.Println(err)
+			ctx.AbortWithStatusJSON(
+				500,
+				BuildResponseFailed("Gagal membaca KTP", err.Error(), nil),
+			)
+			return
 		}
 		defer func(ctx *gin.Context) {
 			err := openedFile.Close()
 			if err != nil {
-				fmt.Println(err)
+				ctx.AbortWithStatusJSON(
+					500,
+					BuildResponseFailed("Gagal membaca KTP", err.Error(), nil),
+				)
+				return
 			}
 		}(ctx)
 
 		fileBytes, err := io.ReadAll(openedFile)
 		if err != nil {
-			fmt.Println(err)
+			ctx.AbortWithStatusJSON(
+				500,
+				BuildResponseFailed("Gagal membaca KTP", err.Error(), nil),
+			)
+			return
 		}
 
 		res := ReadImageBytes(fileBytes, tesseractInstance, ktpRegex)
-		ctx.JSON(200, res)
+		ctx.JSON(200, BuildResponseSuccess("Berhasil membaca KTP", res))
 	})
 
 	if err := ginInstance.Run("localhost:8090"); err != nil {
