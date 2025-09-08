@@ -5,6 +5,7 @@ type ktpData struct {
 	Nama               string `json:"nama"`
 	TempatTanggalLahir string `json:"tempat_tanggal_lahir"`
 	JenisKelamin       string `json:"jenis_kelamin"`
+	GolonganDarah      string `json:"golongan_darah"`
 	Alamat             string `json:"alamat"`
 	RT                 string `json:"rt"`
 	RW                 string `json:"rw"`

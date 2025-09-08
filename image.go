@@ -9,7 +9,11 @@ import (
 	"gocv.io/x/gocv"
 )
 
-func ReadImageBytes(imageBytes []byte, tesseractInstance *gosseract.Client) ktpData {
+func ReadImageBytes(
+	imageBytes []byte,
+	tesseractInstance *gosseract.Client,
+	ktpRegex KtpRegex,
+) ktpData {
 	imageMat, err := gocv.IMDecode(imageBytes, gocv.IMReadColor)
 	defer func() {
 		err := imageMat.Close()
@@ -34,7 +38,11 @@ func ReadImageBytes(imageBytes []byte, tesseractInstance *gosseract.Client) ktpD
 		return ktpData{}
 	}
 
-	return ExtractText(processedImageBytes, tesseractInstance)
+	return ExtractText(
+		processedImageBytes,
+		tesseractInstance,
+		ktpRegex,
+	)
 }
 
 func processImage(srcMat gocv.Mat) ([]byte, error) {

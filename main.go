@@ -11,6 +11,7 @@ import (
 
 func main() {
 	ginInstance := GinConfig()
+	ktpRegex := NewKtpRegex()
 	tesseractInstance := TesseractConfig()
 	defer func() {
 		err := tesseractInstance.Close()
@@ -43,8 +44,8 @@ func main() {
 			fmt.Println(err)
 		}
 
-		res := ReadImageBytes(fileBytes, tesseractInstance)
-        ctx.JSON(200, res)
+		res := ReadImageBytes(fileBytes, tesseractInstance, ktpRegex)
+		ctx.JSON(200, res)
 	})
 
 	if err := ginInstance.Run("localhost:8090"); err != nil {
