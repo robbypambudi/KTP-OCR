@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"bytes"
@@ -29,7 +29,7 @@ func ReadImageBytes(
 		return ktpData{}
 	}
 
-	processedImageBytes, err := processImage(imageMat)
+	processedImageBytes, err := processPNGImage(imageMat)
 	if err != nil {
 		slog.Error(
 			"Error processing image",
@@ -45,7 +45,7 @@ func ReadImageBytes(
 	)
 }
 
-func processImage(srcMat gocv.Mat) ([]byte, error) {
+func processPNGImage(srcMat gocv.Mat) ([]byte, error) {
 	processedImage := gocv.NewMat()
 
 	err := gocv.CvtColor(srcMat, &processedImage, gocv.ColorBGRToGray)

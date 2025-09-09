@@ -1,5 +1,6 @@
-package main
+package internal
 
+// ktpData represents data on KTP
 type ktpData struct {
 	NIK                string `json:"nik"`
 	Nama               string `json:"nama"`
@@ -19,7 +20,5 @@ type ktpData struct {
 }
 
 func NewKtpData() ktpData {
-	return ktpData{
-		BerlakuHingga: "SEUMUR HIDUP", // UU Nomor 24 Tahun 2013
-	}
+	return ktpData{}
 }

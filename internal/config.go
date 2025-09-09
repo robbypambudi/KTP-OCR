@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"net/http"
@@ -7,7 +7,19 @@ import (
 	"github.com/otiai10/gosseract/v2"
 )
 
-func GinConfig() *gin.Engine {
+type Configuration struct {
+	GinConfig       *gin.Engine
+	TesseractConfig *gosseract.Client
+}
+
+func NewConfiguration() Configuration {
+	return Configuration{
+		GinConfig:       NewGinConfig(),
+		TesseractConfig: NewTesseractConfig(),
+	}
+}
+
+func NewGinConfig() *gin.Engine {
 	r := gin.Default()
 
 	// CORS middleware
@@ -25,15 +37,16 @@ func GinConfig() *gin.Engine {
 		c.Next()
 	})
 
-	// multipart forms memory limit
+	// multipart forms memory limit (2 MB)
+	// for image uploads
 	r.MaxMultipartMemory = 2 << 20
 
 	return r
 }
 
-func TesseractConfig() *gosseract.Client {
+func NewTesseractConfig() *gosseract.Client {
 	t := gosseract.NewClient()
-	_ = t.SetLanguage("ind")
+	_ = t.SetLanguage("ind") // set to Bahasa Indonesia
 
 	return t
 }

@@ -1,16 +1,20 @@
-package main
+package internal
 
 import (
 	"log/slog"
 	"regexp"
 )
 
+// KtpRegex struct represents regex used
+// when scanning KTP. It uses regex compile
+// so it compiles once only
 type KtpRegex struct {
 	TempatTanggalLahirRegex *regexp.Regexp
 	JenisKelaminRegex       *regexp.Regexp
 	GolDarRegex             *regexp.Regexp
 	AgamaRegex              *regexp.Regexp
 	KawinRegex              *regexp.Regexp
+	BerlakuHinggaRegex      *regexp.Regexp
 }
 
 func NewKtpRegex() KtpRegex {
@@ -69,11 +73,23 @@ func NewKtpRegex() KtpRegex {
 		panic(err)
 	}
 
+	// berlaku hingga regex
+	berlakuHingga, err := regexp.Compile(
+		`(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-(19|20)\d{2}`,
+	)
+	if err != nil {
+		slog.Error("Error compiling berlaku hingga regex",
+			"error", err,
+		)
+		panic(err)
+	}
+
 	return KtpRegex{
 		TempatTanggalLahirRegex: ttlRegex,
 		JenisKelaminRegex:       jenisKelaminRegex,
 		GolDarRegex:             golDarRegex,
 		AgamaRegex:              agamaRegex,
 		KawinRegex:              kawin,
+		BerlakuHinggaRegex:      berlakuHingga,
 	}
 }
