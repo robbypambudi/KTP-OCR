@@ -22,7 +22,7 @@ func main() {
 
 	internal.CreateRoutes(configuration.GinConfig, configuration.TesseractConfig, ktpRegex)
 
-	if err := configuration.GinConfig.Run("localhost:8090"); err != nil {
+	if err := configuration.GinConfig.Run(":8090"); err != nil {
 		log.Fatalf("error running server: %v", err)
 	}
 }
