@@ -1,13 +1,12 @@
-package main
+package internal
 
+// Response struct represents HTTP response used
 type Response struct {
 	Status  bool   `json:"status"`
 	Message string `json:"message"`
 	Error   any    `json:"error,omitempty"`
 	Data    any    `json:"data,omitempty"`
 }
-
-type EmptyObj struct{}
 
 func BuildResponseSuccess(message string, data any) Response {
 	res := Response{

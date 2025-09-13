@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"log/slog"
@@ -33,10 +33,13 @@ func ExtractText(
 	// handling data here
 	splittedText := strings.SplitSeq(text, "\n")
 	for currentLineText := range splittedText {
-		currentLineText = strings.TrimSpace(currentLineText)
+		key := strings.Split(currentLineText, ":")
+		if len(key) == 1 {
+			continue
+		}
 
 		// handle NIK
-		if strings.Contains(currentLineText, "NIK") {
+		if strings.Contains(key[0], "NIK") {
 			nik := strings.Split(currentLineText, ":")[1]
 			nik = strings.TrimSpace(nik)
 
@@ -63,7 +66,7 @@ func ExtractText(
 		}
 
 		// handle Nama
-		if strings.Contains(currentLineText, "Nama") {
+		if strings.Contains(key[0], "Nama") {
 			nama := strings.Split(currentLineText, ":")[1]
 			nama = strings.TrimSpace(nama)
 			ktpData.Nama = nama
@@ -72,7 +75,7 @@ func ExtractText(
 		}
 
 		// handle tempat tanggal lahir
-		if strings.Contains(currentLineText, "Tempat") {
+		if strings.Contains(key[0], "Tempat") {
 			ttl := strings.Split(currentLineText, ":")[1]
 			ttl = strings.TrimSpace(ttl)
 
@@ -100,7 +103,7 @@ func ExtractText(
 		}
 
 		// handle jenis kelamin and golongan darah
-		if strings.Contains(currentLineText, "Kelamin") {
+		if strings.Contains(key[0], "Kelamin") {
 			jenisKelamin := ktpRegex.JenisKelaminRegex.Find(
 				[]byte(currentLineText),
 			)
@@ -119,7 +122,7 @@ func ExtractText(
 		}
 
 		// handle alamat
-		if strings.Contains(currentLineText, "Alamat") {
+		if strings.Contains(key[0], "Alamat") {
 			alamat := strings.Split(currentLineText, ":")
 			if len(alamat) == 1 {
 				continue
@@ -132,8 +135,8 @@ func ExtractText(
 		}
 
 		// handle rt/rw
-		if strings.Contains(currentLineText, "RT") ||
-			strings.Contains(currentLineText, "RW") {
+		if strings.Contains(key[0], "RT") ||
+			strings.Contains(key[0], "RW") {
 			fullText := strings.Split(currentLineText, ":")
 
 			if len(fullText) == 1 {
@@ -154,7 +157,7 @@ func ExtractText(
 		}
 
 		// handle kelurahan atau desa
-		if strings.Contains(currentLineText, "Kel") {
+		if strings.Contains(key[0], `Kel/Desa`) {
 			kelDesa := strings.Split(currentLineText, ":")
 			if len(kelDesa) == 1 {
 				continue
@@ -168,7 +171,7 @@ func ExtractText(
 		}
 
 		// handle kecamatan
-		if strings.Contains(currentLineText, "Kecamatan") {
+		if strings.Contains(key[0], "Kecamatan") {
 			kecamatan := strings.Split(currentLineText, ":")[1]
 			kecamatan = strings.TrimSpace(kecamatan)
 
@@ -178,7 +181,7 @@ func ExtractText(
 		}
 
 		// handle agama
-		if strings.Contains(currentLineText, "Agama") {
+		if strings.Contains(key[0], "Agama") {
 			agama := ktpRegex.AgamaRegex.Find(
 				[]byte(currentLineText),
 			)
@@ -190,7 +193,7 @@ func ExtractText(
 		}
 
 		// handle status perkawinan
-		if strings.Contains(currentLineText, "Perkawinan") {
+		if strings.Contains(key[0], "Perkawinan") {
 			kawin := ktpRegex.KawinRegex.Find(
 				[]byte(currentLineText),
 			)
@@ -202,7 +205,7 @@ func ExtractText(
 		}
 
 		// handle pekerjaan
-		if strings.Contains(currentLineText, "Pekerjaan") {
+		if strings.Contains(key[0], "Pekerjaan") {
 			pekerjaan := strings.Split(currentLineText, ":")[1]
 			pekerjaan = strings.TrimSpace(pekerjaan)
 
@@ -212,11 +215,22 @@ func ExtractText(
 		}
 
 		// handle kewarganegaraan
-		if strings.Contains(currentLineText, "Kewarganegaraan") {
+		if strings.Contains(key[0], "Kewarganegaraan") {
 			kewarganegaraan := strings.Split(currentLineText, ":")[1]
 			kewarganegaraan = strings.TrimSpace(kewarganegaraan)
 
 			ktpData.Kewarganegaraan = kewarganegaraan
+
+			continue
+		}
+
+		if strings.Contains(key[0], "Berlaku Hingga") {
+			berlakuHingga := ktpRegex.BerlakuHinggaRegex.Find(
+				[]byte(currentLineText),
+			)
+			if berlakuHingga != nil {
+				ktpData.BerlakuHingga = string(berlakuHingga)
+			}
 
 			continue
 		}
